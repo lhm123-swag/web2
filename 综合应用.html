@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>综合应用</title>
+    <style>
+      .con {
+        border: 1px solid #000000;
+        width: 500px;
+        height: 600px;
+        text-align: center;
+        position: relative;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+      }
+      .con > div {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #000000;
+        box-shadow: 2px 2px 2px #cccccc;
+        float: left;
+        margin: 11px;
+        text-align: center;
+        font-size: 40px;
+        line-height: 100px;
+        cursor: hand;
+      }
+      .divs:hover {
+        background-color: #efefef;
+      }
+      .con > input {
+        width: 90%;
+        height: 30px;
+        line-height: 30px;
+        font-size: 25px;
+        text-align: right;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-shadow: 3px 3px 3px #cccccc;
+        outline: none;
+        padding: 5px 10px;
+        background-color: white;
+        border: 1px solid #000000;
+      }
+      .clear::after {
+        content: "";
+        clear: both;
+        display: block;
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+      }
+      .clear {
+        zoom: 1;
+      }
+		#box1 {
+			width: 100px;
+			height: 100px;
+			background-color: red;
+			position: absolute;
+		}
+    </style>
+  </head>
+  <body>
+    <div class="con clear">
+      <input type="text" id="input" disabled />
+      <div class="divs">7</div>
+      <div class="divs">8</div>
+      <div class="divs">9</div>
+      <div class="divs">-</div>
+      <div class="divs">4</div>
+      <div class="divs">5</div>
+      <div class="divs">6</div>
+      <div class="divs">+</div>
+      <div class="divs">1</div>
+      <div class="divs">2</div>
+      <div class="divs">3</div>
+      <div class="divs">*</div>
+      <div class="divs">C</div>
+      <div class="divs">0</div>
+      <div class="divs">=</div>
+      <div class="divs">/</div>
+    </div>
+     当前时间为：<span id="now"></span>
+
+	<div id="box1" ></div>
+    <script>
+      var input, divs, type;
+      var value1 = "";
+      var value2 = "";
+      init();
+      function init() {
+        input = document.getElementById("input");
+        divs = document.getElementsByClassName("divs");
+        for (var i = 0; i < divs.length; i++) {
+          divs[i].addEventListener("click", clickHandler);
+        }
+      }
+      function clickHandler() {
+        console.log(this.innerHTML);//暂时认知在点击的函数中this是被点击的元素
+        if (isNaN(this.innerHTML)) {
+          calculateValue(this.innerHTML);
+        } else {
+          setInputValue(Number(this.innerHTML));
+        }
+      }
+      function calculateValue(_type) {
+        if (_type === "C") return clearInput();
+        if (_type === "=") return calculate();
+        if (!value1) return;
+        type = _type;
+      }
+      function setInputValue(num) {
+        if (!type) {
+          value1 = Number(value1 + num).toString();
+          input.value = value1;
+        } else {
+          value2 = Number(value2 + num).toString();
+          input.value = value1 + type + value2;
+        }
+      }
+      function clearInput() {
+        value1 = "";
+        value2 = "";
+        type = "";
+        input.value = "";
+      }
+      function calculate() {
+        if (!type || !value2) return;
+        var s;
+        switch (type) {
+          case "+":
+            s = Number(value1) + Number(value2);
+            break;
+          case "-":
+            s = value1 - value2;
+            break;
+          case "*":
+            s = value1 * value2;
+            break;
+          case "/":
+            s = value1 / value2;
+            break;
+        }
+        input.value = value1 + type + value2 + "=" + s;
+        value1 = s.toString();
+        value2 = "";
+        type = "";
+      }
+               gw_now();
+         function gw_now(){
+         var obj=window.document.getElementById('now');
+          var date=new Date();
+         var year=date.getFullYear();
+         var month=gw_now_addzero(date.getMonth()+1);
+         var day=gw_now_addzero(date.getDate());
+         var hour=gw_now_addzero(date.getHours());
+         var minute=gw_now_addzero(date.getMinutes());
+         var second=gw_now_addzero(date.getSeconds());
+         switch (date.getDay()) {
+          case 0:week="星期天";break
+          case 1:week="星期一";break
+          case 2:week="星期二";break
+          case 3:week="星期三";break
+          case 4:week="星期四";break
+          case 5:week="星期五";break
+          case 6:week="星期六";break
+         }
+         obj.innerHTML=year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + " " + week; 
+         
+        }
+        setInterval(function(){  //1）因为是动态的需要定时器 
+            gw_now();
+        },1000);
+
+
+        function gw_now_addzero(temp){ //2）加上时间前面的"0"
+             if(temp<10) {
+                 return "0" + temp;
+             }else {
+
+
+                return temp;
+                 }           
+        }
+
+		window.onload = function() {
+			var box1 = document.getElementById("box1");
+			document.onmousemove = function(event) {
+ 
+				// 解决兼容性问题
+				event = event || window.event;
+				var st = document.body.scrollTop || document.documentElement.scrollTop;
+				var sl = document.body.scrollLeft || document.documentElement.scrollLeft;
+				
+				var left = event.clientX;
+				var top = event.clientY;
+ 
+				box1.style.left = left + sl +  "px";
+				box1.style.top = top +  st +"px";
+			};
+		};
+
+    </script>
+  </body>
+</html>
